@@ -77,6 +77,9 @@ int main(int, const char **) {
 
     Network net({15 * 20, 100, 8 /*11*/});
 
+    net.setAlpha(1);
+    net.setEta(1);
+
     net.learn(examples);
 
     print(net.impulse(_1_data));

@@ -17,12 +17,12 @@ const std::vector<double> &Network::Example::output() const {
     return out;
 }
 
-const double Network::alpha = 1.0;
-const double Network::eta = 1.0;
-const double Network::maxError = 1e-3;
-const int Network::maxEpochs = 1000;
-
 Network::Network(const std::vector<int> &sizes) {
+    alpha = 1.0;
+    eta = 1.0;
+    maxError = 1e-3;
+    maxEpochs = 1000;
+
     n = std::vector<std::vector<double>>(sizes.size());
 
     for (int i = 1; i < (int)sizes.size(); i++) {
@@ -50,11 +50,6 @@ std::vector<double> Network::impulse(const std::vector<double> input) {
 }
 
 void Network::learn(std::vector<Example> &examples) {
-    std::vector<Matrix<double>> wT(w.size());
-
-    for (int i = 0; i < (int)w.size(); i++)
-        wT[i] = w[i].transposed();
-
     for (int i = 0; i < maxEpochs; i++) {
         double error = 0;
 
@@ -84,15 +79,12 @@ void Network::learn(std::vector<Example> &examples) {
             for (int i = w.size() - 1; i >= 0; i--) {
                 for (int p = 0; p < (int)n[i].size(); p++)
                     for (int q = 0; q < (int)n[i + 1].size(); q++)
-                        // wT[i][q][p] += eta * n[i][p] * (alpha * exp(alpha * n[i + 1][q]) / pow(exp(alpha * n[i + 1][q]) + 1, 2)) * delta[q];
-                        wT[i][q][p] += eta * n[i][p] * n[i + 1][q] * (1 - n[i + 1][q]) * delta[q];
+                        // w[i][p][q] += eta * n[i][p] * (alpha * exp(alpha * n[i + 1][q]) / pow(exp(alpha * n[i + 1][q]) + 1, 2)) * delta[q];
+                        w[i][p][q] += eta * n[i][p] * n[i + 1][q] * (1 - n[i + 1][q]) * delta[q];
 
                 if (i > 0)
-                    delta = wT[i].multiply(delta);
+                    delta = w[i].multiplyTransposed(delta);
             }
-
-            for (int i = 0; i < (int)w.size(); i++)
-                w[i] = wT[i].transposed();
         }
 
         std::cout << "\n" << i << ": error = " << error << "\n\n";
@@ -102,6 +94,38 @@ void Network::learn(std::vector<Example> &examples) {
     }
 }
 
-double Network::sigmoid(double x) {
+double Network::getAlpha() {
+    return alpha;
+}
+
+void Network::setAlpha(double alpha) {
+    this->alpha = alpha;
+}
+
+double Network::getEta() {
+    return eta;
+}
+
+void Network::setEta(double eta) {
+    this->eta = eta;
+}
+
+double Network::getMaxError() {
+    return maxError;
+}
+
+void Network::setMaxError(double maxError) {
+    this->maxError = maxError;
+}
+
+int Network::getMaxEpochs() {
+    return maxEpochs;
+}
+
+void Network::setMaxEpochs(int maxEpochs) {
+    this->maxEpochs = maxEpochs;
+}
+
+double Network::sigmoid(double x) const {
     return 1.0 / (1.0 + exp(-alpha * x));
 }

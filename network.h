@@ -18,10 +18,10 @@ public:
     };
 
 private:
-    static const double alpha;
-    static const double eta;
-    static const double maxError;
-    static const int maxEpochs;
+    double alpha;
+    double eta;
+    double maxError;
+    int maxEpochs;
 
     std::vector<Matrix<double>> w;
     std::vector<std::vector<double>> n;
@@ -32,6 +32,18 @@ public:
     std::vector<double> impulse(const std::vector<double> input);
     void learn(std::vector<Example> &examples);
 
+    double getAlpha();
+    void setAlpha(double alpha);
+
+    double getEta();
+    void setEta(double eta);
+
+    double getMaxError();
+    void setMaxError(double maxError);
+
+    int getMaxEpochs();
+    void setMaxEpochs(int maxEpochs);
+
 private:
-    static double sigmoid(double x);
+    double sigmoid(double x) const;
 };

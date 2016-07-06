@@ -29,6 +29,7 @@ public:
     T *operator[](int i);
 
     std::vector<T> multiply(const std::vector<T> &v) const;
+    std::vector<T> multiplyTransposed(const std::vector<T> &v) const;
     Matrix transposed() const;
 };
 
@@ -136,6 +137,18 @@ std::vector<T> Matrix<T>::multiply(const std::vector<T> &v) const {
     for (int j = 0; j < w; j++)
         for (int i = 0; i < h; i++)
             result[j] += at(i, j) * v[i];
+
+    return result;
+}
+
+template <class T>
+std::vector<T> Matrix<T>::multiplyTransposed(const std::vector<T> &v) const {
+    std::vector<T> result(h);
+    std::fill(result.begin(), result.end(), (T)0);
+
+    for (int j = 0; j < h; j++)
+        for (int i = 0; i < w; i++)
+            result[j] += at(j, i) * v[i];
 
     return result;
 }
