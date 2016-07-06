@@ -26,49 +26,57 @@ Network::Network(const std::vector<int> &sizes) {
     n = std::vector<std::vector<double>>(sizes.size());
 
     for (int i = 1; i < (int)sizes.size(); i++) {
-        Matrix<double> m(sizes[i], sizes[i - 1]);
+        Matrix<double> m(sizes[i - 1] + 1, sizes[i]);
 
         for (int i = 0; i < m.height(); i++)
             for (int j = 0; j < m.width(); j++)
-                m[i][j] = (double)rand() / RAND_MAX / 10;
+                m[i][j] = (double)rand() / RAND_MAX * 1e-1;
 
         w.push_back(m);
     }
 }
 
-std::vector<double> Network::impulse(const std::vector<double> input) {
+std::vector<double> Network::impulse(const std::vector<double> &input) {
     n[0] = input;
 
     for (int i = 0; i < (int)w.size(); i++) {
+        n[i].push_back(1);
+
         n[i + 1] = w[i].multiply(n[i]);
 
         for (int j = 0; j < (int)n[i + 1].size(); j++)
             n[i + 1][j] = sigmoid(n[i + 1][j]);
+
+        n[i].pop_back();
     }
 
     return n[n.size() - 1];
 }
 
-void Network::learn(std::vector<Example> &examples) {
+void Network::learn(const std::vector<Example> &examples) {
+    std::vector<Example> ex(examples);
+
     for (int i = 0; i < maxEpochs; i++) {
         double error = 0;
 
         int c = 0;
 
-        std::random_shuffle(examples.begin(), examples.end());
+        std::random_shuffle(ex.begin(), ex.end());
 
-        for (const Example &e : examples) {
+        for (const Example &e : ex) {
             impulse(e.input());
 
-            std::vector<double> correctOutput = e.output();
-            std::vector<double> output = n[n.size() - 1];
+            const std::vector<double> &correctOutput = e.output();
+            const std::vector<double> &output = n[n.size() - 1];
 
-            std::vector<double> delta(correctOutput.size());
+            std::vector<double> delta(output.size());
 
             double averageError = 0;
 
-            for (int i = 0; i < (int)delta.size(); i++)
-                averageError += fabs(delta[i] = correctOutput[i] - output[i]);
+            for (int i = 0; i < (int)output.size(); i++) {
+                averageError += fabs(correctOutput[i] - output[i]);
+                delta[i] = output[i] * (1 - output[i]) * (correctOutput[i] - output[i]);
+            }
 
             averageError /= delta.size();
 
@@ -77,13 +85,19 @@ void Network::learn(std::vector<Example> &examples) {
             error = std::max(error, averageError);
 
             for (int i = w.size() - 1; i >= 0; i--) {
-                for (int p = 0; p < (int)n[i].size(); p++)
+                for (int p = 0; p < (int)n[i].size() - 1; p++)
                     for (int q = 0; q < (int)n[i + 1].size(); q++)
-                        // w[i][p][q] += eta * n[i][p] * (alpha * exp(alpha * n[i + 1][q]) / pow(exp(alpha * n[i + 1][q]) + 1, 2)) * delta[q];
-                        w[i][p][q] += eta * n[i][p] * n[i + 1][q] * (1 - n[i + 1][q]) * delta[q];
+                        w[i][p][q] += eta * n[i][p] * delta[q];
 
-                if (i > 0)
+                for (int q = 0; q < (int)n[i + 1].size(); q++)
+                    w[i][n[i].size() - 1][q] += delta[q];
+
+                if (i > 0) {
                     delta = w[i].multiplyTransposed(delta);
+
+                    for (int p = 0; p < (int)n[i].size() - 1; p++)
+                        delta[p] *= n[i][p] * (1 - n[i][p]);
+                }
             }
         }
 

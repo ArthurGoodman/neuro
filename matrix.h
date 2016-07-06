@@ -5,11 +5,11 @@
 template <class T>
 class Matrix {
     T *data;
-    int w, h;
+    int h, w;
 
 public:
     Matrix();
-    Matrix(int w, int h);
+    Matrix(int h, int w);
 
     Matrix(const Matrix &m);
     Matrix(Matrix &&m);
@@ -21,8 +21,8 @@ public:
     Matrix &operator=(const Matrix &m);
     Matrix &operator=(Matrix &&m);
 
-    int width() const;
     int height() const;
+    int width() const;
 
     T at(int i, int j) const;
 
@@ -39,26 +39,26 @@ Matrix<T>::Matrix()
 }
 
 template <class T>
-Matrix<T>::Matrix(int w, int h)
-    : w(w), h(h) {
-    data = new T[w * h];
+Matrix<T>::Matrix(int h, int w)
+    : h(h), w(w) {
+    data = new T[h * w];
 }
 
 template <class T>
 Matrix<T>::Matrix(const Matrix &m)
-    : w(m.w), h(m.h) {
-    data = new T[w * h];
+    : h(m.h), w(m.w) {
+    data = new T[h * w];
 
-    for (int i = 0; i < w * h; i++)
+    for (int i = 0; i < h * w; i++)
         data[i] = m.data[i];
 }
 
 template <class T>
 Matrix<T>::Matrix(const std::vector<std::vector<T>> &v) {
-    w = v[0].size();
     h = v.size();
+    w = v[0].size();
 
-    data = new T[w * h];
+    data = new T[h * w];
 
     for (int i = 0; i < h; i++)
         for (int j = 0; j < w; j++)
@@ -67,10 +67,10 @@ Matrix<T>::Matrix(const std::vector<std::vector<T>> &v) {
 
 template <class T>
 Matrix<T>::Matrix(Matrix<T> &&m)
-    : data(m.data), w(m.w), h(m.h) {
+    : data(m.data), h(m.h), w(m.w) {
     m.data = 0;
-    m.w = 0;
     m.h = 0;
+    m.w = 0;
 }
 
 template <class T>
@@ -80,14 +80,14 @@ Matrix<T>::~Matrix() {
 
 template <class T>
 Matrix<T> &Matrix<T>::operator=(const Matrix<T> &m) {
-    w = m.w;
     h = m.h;
+    w = m.w;
 
     delete[] data;
 
-    data = new T[w * h];
+    data = new T[h * w];
 
-    for (int i = 0; i < w * h; i++)
+    for (int i = 0; i < h * w; i++)
         data[i] = m.data[i];
 
     return *this;
@@ -95,28 +95,28 @@ Matrix<T> &Matrix<T>::operator=(const Matrix<T> &m) {
 
 template <class T>
 Matrix<T> &Matrix<T>::operator=(Matrix<T> &&m) {
-    w = m.w;
     h = m.h;
+    w = m.w;
 
     delete[] data;
 
     data = m.data;
 
     m.data = 0;
-    m.w = 0;
     m.h = 0;
+    m.w = 0;
 
     return *this;
 }
 
 template <class T>
-int Matrix<T>::width() const {
-    return w;
+int Matrix<T>::height() const {
+    return h;
 }
 
 template <class T>
-int Matrix<T>::height() const {
-    return h;
+int Matrix<T>::width() const {
+    return w;
 }
 
 template <class T>

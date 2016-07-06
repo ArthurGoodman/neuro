@@ -29,8 +29,8 @@ private:
 public:
     Network(const std::vector<int> &sizes);
 
-    std::vector<double> impulse(const std::vector<double> input);
-    void learn(std::vector<Example> &examples);
+    std::vector<double> impulse(const std::vector<double> &input);
+    void learn(const std::vector<Example> &examples);
 
     double getAlpha();
     void setAlpha(double alpha);

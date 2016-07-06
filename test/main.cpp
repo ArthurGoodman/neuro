@@ -21,8 +21,8 @@ std::vector<double> processImage(const fr::Image &image) {
             int color = image.getPixel(x, y);
 
             result.push_back(1.0 - (double)fr::Color::red(color) / 255);
-            //            result.push_back((double)fr::Color::green(color) / 255);
-            //            result.push_back((double)fr::Color::blue(color) / 255);
+            // result.push_back((double)fr::Color::green(color) / 255);
+            // result.push_back((double)fr::Color::blue(color) / 255);
         }
 
     return result;
@@ -75,10 +75,13 @@ int main(int, const char **) {
     //    examples.push_back(Network::Example(_cm_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
     //    examples.push_back(Network::Example(_cl_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
 
-    Network net({15 * 20, 100, 8 /*11*/});
+    int size = 15 * 20 * 1;
 
-    net.setAlpha(1);
-    net.setEta(1);
+    Network net({size, 100, 8 /*11*/});
+
+    net.setAlpha(0.5);
+    net.setEta(0.99);
+    //    net.setMaxEpochs(50);
 
     net.learn(examples);
 
