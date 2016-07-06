@@ -20,9 +20,9 @@ std::vector<double> processImage(const fr::Image &image) {
         for (int y = 0; y < image.height(); y++) {
             int color = image.getPixel(x, y);
 
-            result.push_back((double)fr::Color::red(color) / 255);
-            result.push_back((double)fr::Color::green(color) / 255);
-            result.push_back((double)fr::Color::blue(color) / 255);
+            result.push_back(1.0 - (double)fr::Color::red(color) / 255);
+            //            result.push_back((double)fr::Color::green(color) / 255);
+            //            result.push_back((double)fr::Color::blue(color) / 255);
         }
 
     return result;
@@ -31,14 +31,14 @@ std::vector<double> processImage(const fr::Image &image) {
 int main(int, const char **) {
     srand(time(0));
 
-    fr::Image _1("data/1.bmp");
-    fr::Image _2("data/2.bmp");
-    fr::Image _3("data/3.bmp");
-    fr::Image _4("data/4.bmp");
-    fr::Image _5("data/5.bmp");
-    fr::Image _6("data/6.bmp");
-    fr::Image _7("data/7.bmp");
-    fr::Image _8("data/8.bmp");
+    fr::Image _1("digits/1.bmp");
+    fr::Image _2("digits/2.bmp");
+    fr::Image _3("digits/3.bmp");
+    fr::Image _4("digits/4.bmp");
+    fr::Image _5("digits/5.bmp");
+    fr::Image _6("digits/6.bmp");
+    fr::Image _7("digits/7.bmp");
+    fr::Image _8("digits/8.bmp");
     //    fr::Image _o("data/o.bmp");
     //    fr::Image _f("data/f.bmp");
     //    fr::Image _cd("data/cd.bmp");
@@ -75,7 +75,7 @@ int main(int, const char **) {
     //    examples.push_back(Network::Example(_cm_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
     //    examples.push_back(Network::Example(_cl_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
 
-    Network net({6912, 300, 8 /*11*/});
+    Network net({15 * 20, 100, 8 /*11*/});
 
     net.learn(examples);
 

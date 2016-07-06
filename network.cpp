@@ -17,10 +17,10 @@ const std::vector<double> &Network::Example::output() const {
     return out;
 }
 
-const double Network::alpha = 2.0;
-const double Network::eta = 0.1;
-const double Network::maxError = 1e-5;
-const int Network::maxEpochs = 100;
+const double Network::alpha = 1.0;
+const double Network::eta = 1.0;
+const double Network::maxError = 1e-3;
+const int Network::maxEpochs = 1000;
 
 Network::Network(const std::vector<int> &sizes) {
     n = std::vector<std::vector<double>>(sizes.size());
@@ -28,8 +28,8 @@ Network::Network(const std::vector<int> &sizes) {
     for (int i = 1; i < (int)sizes.size(); i++) {
         Matrix<double> m(sizes[i], sizes[i - 1]);
 
-        for (int i = 0; i < m.width(); i++)
-            for (int j = 0; j < m.height(); j++)
+        for (int i = 0; i < m.height(); i++)
+            for (int j = 0; j < m.width(); j++)
                 m[i][j] = (double)rand() / RAND_MAX / 10;
 
         w.push_back(m);
@@ -52,6 +52,9 @@ std::vector<double> Network::impulse(const std::vector<double> input) {
 void Network::learn(std::vector<Example> &examples) {
     std::vector<Matrix<double>> wT(w.size());
 
+    for (int i = 0; i < (int)w.size(); i++)
+        wT[i] = w[i].transposed();
+
     for (int i = 0; i < maxEpochs; i++) {
         double error = 0;
 
@@ -60,9 +63,6 @@ void Network::learn(std::vector<Example> &examples) {
         std::random_shuffle(examples.begin(), examples.end());
 
         for (const Example &e : examples) {
-            for (int i = 0; i < (int)w.size(); i++)
-                wT[i] = w[i].transposed();
-
             impulse(e.input());
 
             std::vector<double> correctOutput = e.output();
