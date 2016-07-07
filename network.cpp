@@ -105,7 +105,7 @@ double Network::learn(const Network::Example &e) {
             delta = w[i].multiplyTransposed(delta);
 
             for (int p = 0; p < (int)n[i].size() - 1; p++)
-                delta[p] *= (1 - n[i][p] * n[i][p]);
+                delta[p] *= 1 - n[i][p] * n[i][p];
         }
     }
 

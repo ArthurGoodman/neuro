@@ -7,14 +7,15 @@ Widget::Widget(QWidget *parent)
 
     qsrand(QTime::currentTime().msec());
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100; i++) {
         QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
-        points << QPair<QPointF, int>(p, p.x() > p.y());
+        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75);
+        //        points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
     }
 
     init();
 
-    startTimer(10);
+    startTimer(0);
 }
 
 Widget::~Widget() {
@@ -46,6 +47,8 @@ void Widget::paintEvent(QPaintEvent *) {
 
     p.translate(width() / 2, height() / 2);
 
+    p.setRenderHint(QPainter::Antialiasing);
+
     const QColor red = QColor(255, 0, 0, 150);
     const QColor green = QColor(0, 255, 0, 150);
 
@@ -57,15 +60,13 @@ void Widget::paintEvent(QPaintEvent *) {
     for (double x = 0; x < 1; x += step)
         for (double y = 0; y < 1; y += step) {
             std::vector<double> out = net->impulse({x, y});
-            p.fillRect(QRectF((x - 0.5) * scale, (y - 0.5) * scale, step * scale, step * scale), out[0] > out[1] ? red : green);
+            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y) * scale, step * scale, step * scale), out[0] > out[1] ? red : green);
         }
-
-    p.setRenderHint(QPainter::Antialiasing);
 
     for (const QPair<QPointF, int> &point : points) {
         QPainterPath path;
 
-        path.addEllipse((point.first - QPointF(0.5, 0.5)) * scale, radius, radius);
+        path.addEllipse((QPointF(point.first.x() - 0.5, 0.5 - point.first.y())) * scale, radius, radius);
 
         p.fillPath(path, point.second == 0 ? red : green);
         p.strokePath(path, QPen(Qt::black));
@@ -75,8 +76,8 @@ void Widget::paintEvent(QPaintEvent *) {
 void Widget::init() {
     delete net;
 
-    net = new Network({2, 8, 2});
+    net = new Network({2, 10, 2});
     net->setVerbose(false);
 
-    net->setEta(0.1);
+    net->setEta(0.05);
 }
