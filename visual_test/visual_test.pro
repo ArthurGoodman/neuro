@@ -1,8 +1,8 @@
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += windows c++11
 QT += core gui widgets
 
-LIBS += -L../../framework/debug -L../debug -lframework -lneuro -lgdi32
+LIBS += -L../../framework/release -L../release -lframework -lneuro -lgdi32
 INCLUDEPATH += ../../framework ..
 
 SOURCES += \

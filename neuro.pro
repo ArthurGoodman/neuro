@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += console c++11 staticlib
+CONFIG += windows c++11 staticlib
 CONFIG -= app_bundle qt
 
 HEADERS += \

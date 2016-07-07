@@ -19,7 +19,7 @@ public:
 
 private:
     double alpha;
-    double eta;
+    double learningRate;
     double maxError;
     int maxEpochs;
 
@@ -40,8 +40,8 @@ public:
     bool isVerbose() const;
     void setVerbose(bool verbose);
 
-    double getEta() const;
-    void setEta(double eta);
+    double getLearningRate() const;
+    void setLearningRate(double learningRate);
 
     double getMaxError() const;
     void setMaxError(double maxError);

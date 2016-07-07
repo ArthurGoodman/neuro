@@ -79,7 +79,7 @@ int main(int, const char **) {
 
     Network net({size, 8 /*11*/});
 
-    net.setEta(0.01);
+    net.setLearningRate(0.01);
     net.setMaxEpochs(5000);
 
     net.train(examples);

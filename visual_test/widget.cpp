@@ -9,9 +9,9 @@ Widget::Widget(QWidget *parent)
 
     scale = 500;
 
-    net = new Network({2, 10, 2});
+    net = new Network({2, 10, 10, 2});
     net->setVerbose(false);
-    net->setEta(0.05);
+    net->setLearningRate(0.01);
 
     init();
 
@@ -24,8 +24,7 @@ Widget::~Widget() {
 
 void Widget::timerEvent(QTimerEvent *) {
     for (const QPair<QPointF, int> &point : points)
-        //        qDebug() <<
-        net->learn(Network::Example({point.first.x(), point.first.y()}, {1.0 - point.second, (double)point.second}));
+        qDebug() << net->learn(Network::Example({point.first.x(), point.first.y()}, {1.0 - point.second, (double)point.second}));
 
     update();
 }
@@ -87,9 +86,9 @@ void Widget::paintEvent(QPaintEvent *) {
 void Widget::init() {
     points.clear();
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 500; i++) {
         QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
-        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75);
+        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
         //        points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
     }
 

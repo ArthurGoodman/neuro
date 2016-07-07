@@ -6,8 +6,6 @@ template <class T>
 class Matrix {
     T *data;
     int h, w;
-    int id;
-    static int newId;
 
 public:
     Matrix();
@@ -36,55 +34,42 @@ public:
 };
 
 template <class T>
-int Matrix<T>::newId = 0;
-
-#include <iostream>
-
-template <class T>
 Matrix<T>::Matrix()
-    : data(0), h(0), w(0), id(newId++) {
-    std::cout << "id: " << id << "Matrix()\n" << std::flush;
+    : data(0), h(0), w(0) {
 }
 
 template <class T>
 Matrix<T>::Matrix(int h, int w)
-    : h(h), w(w), id(newId++) {
-    std::cout << "id: " << id << " Matrix(int h, int w)\n" << std::flush;
+    : h(h), w(w) {
     data = new T[h * w];
 }
 
 template <class T>
 Matrix<T>::Matrix(const Matrix &m)
-    : data(0), h(0), w(0), id(newId++) {
-    std::cout << "id: " << id << " Matrix(const Matrix &m)\n" << std::flush;
+    : data(0), h(0), w(0) {
     *this = m;
 }
 
 template <class T>
 Matrix<T>::Matrix(const std::vector<std::vector<T>> &v)
-    : data(new T[v.size() * v[0].size()]), h(v.size()), w(v[0].size()), id(newId++) {
-    std::cout << "id: " << id << " Matrix(const std::vector<std::vector<T>> &v)\n" << std::flush;
+    : data(new T[v.size() * v[0].size()]), h(v.size()), w(v[0].size()) {
     for (int i = 0; i < h; i++)
         std::copy(v[i].begin(), v[i].end(), (*this)[i]);
 }
 
 template <class T>
 Matrix<T>::Matrix(Matrix<T> &&m)
-    : data(0), h(0), w(0), id(newId++) {
-    std::cout << "id: " << id << " Matrix(Matrix<T> &&m)\n" << std::flush;
+    : data(0), h(0), w(0) {
     *this = std::move(m);
 }
 
 template <class T>
 Matrix<T>::~Matrix() {
-    std::cout << "id: " << id << " ~Matrix()\n" << std::flush;
-    std::cout << (int)data << "\n" << std::flush;
     delete[] data;
 }
 
 template <class T>
 Matrix<T> &Matrix<T>::operator=(const Matrix<T> &m) {
-    std::cout << "id: " << id << " operator=(const Matrix<T> &m)\n" << std::flush;
     delete[] data;
 
     h = m.h;
@@ -99,7 +84,6 @@ Matrix<T> &Matrix<T>::operator=(const Matrix<T> &m) {
 
 template <class T>
 Matrix<T> &Matrix<T>::operator=(Matrix<T> &&m) {
-    std::cout << "id: " << id << " operator=(Matrix<T> &&m)\n" << std::flush;
     delete[] data;
 
     data = m.data;

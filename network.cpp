@@ -18,7 +18,7 @@ const std::vector<double> &Network::Example::output() const {
 }
 
 Network::Network(const std::vector<int> &sizes) {
-    eta = 1.0;
+    learningRate = 1.0;
     maxError = 1e-3;
     maxEpochs = 1000;
 
@@ -98,14 +98,14 @@ double Network::learn(const Example &e) {
         std::cout << averageError << "\n";
 
     for (int i = w.size() - 1; i >= 0; i--) {
-        for (int p = 0; p < (int)n[i].size(); p++)
-            for (int q = 0; q < (int)n[i + 1].size(); q++)
-                w[i][p][q] += eta * n[i][p] * delta[q];
+        for (int p = 0; p < w[i].height(); p++)
+            for (int q = 0; q < w[i].width(); q++)
+                w[i][p][q] += learningRate * n[i][p] * delta[q];
 
         if (i > 0) {
             delta = w[i].multiplyTransposed(delta);
 
-            for (int p = 0; p < (int)n[i].size() - 1; p++)
+            for (int p = 0; p < w[i].height() - 1; p++)
                 delta[p] *= 1 - n[i][p] * n[i][p];
         }
     }
@@ -121,12 +121,12 @@ void Network::setVerbose(bool verbose) {
     this->verbose = verbose;
 }
 
-double Network::getEta() const {
-    return eta;
+double Network::getLearningRate() const {
+    return learningRate;
 }
 
-void Network::setEta(double eta) {
-    this->eta = eta;
+void Network::setLearningRate(double learningRate) {
+    this->learningRate = learningRate;
 }
 
 double Network::getMaxError() const {
