@@ -7,11 +7,11 @@ Widget::Widget(QWidget *parent)
 
     qsrand(QTime::currentTime().msec());
 
-    for (int i = 0; i < 100; i++) {
-        QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
-        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75);
-        //        points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
-    }
+    scale = 500;
+
+    net = new Network({2, 10, 2});
+    net->setVerbose(false);
+    net->setEta(0.05);
 
     init();
 
@@ -24,9 +24,10 @@ Widget::~Widget() {
 
 void Widget::timerEvent(QTimerEvent *) {
     for (const QPair<QPointF, int> &point : points)
-        qDebug() << net->learn(Network::Example({point.first.x(), point.first.y()}, {1.0 - point.second, (double)point.second}));
+        //        qDebug() <<
+        net->learn(Network::Example({point.first.x(), point.first.y()}, {1.0 - point.second, (double)point.second}));
 
-    repaint();
+    update();
 }
 
 void Widget::keyPressEvent(QKeyEvent *e) {
@@ -38,7 +39,18 @@ void Widget::keyPressEvent(QKeyEvent *e) {
     case Qt::Key_F11:
         isFullScreen() ? showNormal() : showFullScreen();
         break;
+
+    case Qt::Key_R:
+        init();
+        break;
     }
+}
+
+void Widget::wheelEvent(QWheelEvent *e) {
+    if (e->delta() > 0)
+        scale *= 1.1;
+    else
+        scale /= 1.1;
 }
 
 void Widget::paintEvent(QPaintEvent *) {
@@ -53,14 +65,13 @@ void Widget::paintEvent(QPaintEvent *) {
     const QColor green = QColor(0, 255, 0, 150);
 
     int radius = 5;
-    double scale = 500;
 
     double step = 0.01;
 
     for (double x = 0; x < 1; x += step)
         for (double y = 0; y < 1; y += step) {
             std::vector<double> out = net->impulse({x, y});
-            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y) * scale, step * scale, step * scale), out[0] > out[1] ? red : green);
+            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out[0] > out[1] ? red : green);
         }
 
     for (const QPair<QPointF, int> &point : points) {
@@ -74,10 +85,13 @@ void Widget::paintEvent(QPaintEvent *) {
 }
 
 void Widget::init() {
-    delete net;
+    points.clear();
 
-    net = new Network({2, 10, 2});
-    net->setVerbose(false);
+    for (int i = 0; i < 100; i++) {
+        QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
+        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75);
+        //        points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
+    }
 
-    net->setEta(0.05);
+    net->init();
 }

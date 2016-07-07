@@ -26,6 +26,8 @@ Network::Network(const std::vector<int> &sizes) {
 
     n = std::vector<std::vector<double>>(sizes.size());
 
+    w.reserve(sizes.size() - 1);
+
     for (int i = 1; i < (int)sizes.size(); i++)
         w.push_back(Matrix<double>(sizes[i - 1] + 1, sizes[i]));
 
@@ -75,7 +77,7 @@ void Network::train(const std::vector<Example> &examples) {
     }
 }
 
-double Network::learn(const Network::Example &e) {
+double Network::learn(const Example &e) {
     impulse(e.input());
 
     const std::vector<double> &correctOutput = e.output();

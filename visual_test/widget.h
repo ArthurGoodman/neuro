@@ -10,6 +10,8 @@ class Widget : public QWidget {
     Network *net;
     QVector<QPair<QPointF, int>> points;
 
+    double scale;
+
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
@@ -17,6 +19,7 @@ public:
 protected:
     void timerEvent(QTimerEvent *e);
     void keyPressEvent(QKeyEvent *e);
+    void wheelEvent(QWheelEvent *e);
     void paintEvent(QPaintEvent *e);
 
 private:
