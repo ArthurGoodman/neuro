@@ -23,25 +23,33 @@ private:
     double maxError;
     int maxEpochs;
 
+    bool verbose;
+
     std::vector<Matrix<double>> w;
     std::vector<std::vector<double>> n;
 
 public:
     Network(const std::vector<int> &sizes);
 
-    std::vector<double> impulse(const std::vector<double> &input);
-    void learn(const std::vector<Example> &examples);
+    void init();
 
-    double getAlpha();
+    std::vector<double> impulse(const std::vector<double> &input);
+    void train(const std::vector<Example> &examples);
+    double learn(const Example &e);
+
+    bool isVerbose() const;
+    void setVerbose(bool verbose);
+
+    double getAlpha() const;
     void setAlpha(double alpha);
 
-    double getEta();
+    double getEta() const;
     void setEta(double eta);
 
-    double getMaxError();
+    double getMaxError() const;
     void setMaxError(double maxError);
 
-    int getMaxEpochs();
+    int getMaxEpochs() const;
     void setMaxEpochs(int maxEpochs);
 
 private:

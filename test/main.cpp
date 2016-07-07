@@ -83,7 +83,7 @@ int main(int, const char **) {
     net.setEta(0.01);
     net.setMaxEpochs(5000);
 
-    net.learn(examples);
+    net.train(examples);
 
     print(net.impulse(_1_data));
     print(net.impulse(_2_data));
