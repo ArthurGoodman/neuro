@@ -40,9 +40,6 @@ public:
     bool isVerbose() const;
     void setVerbose(bool verbose);
 
-    double getAlpha() const;
-    void setAlpha(double alpha);
-
     double getEta() const;
     void setEta(double eta);
 
@@ -51,7 +48,4 @@ public:
 
     int getMaxEpochs() const;
     void setMaxEpochs(int maxEpochs);
-
-private:
-    double sigmoid(double x) const;
 };

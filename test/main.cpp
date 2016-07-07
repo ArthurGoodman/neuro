@@ -79,7 +79,6 @@ int main(int, const char **) {
 
     Network net({size, 8 /*11*/});
 
-    net.setAlpha(1.0);
     net.setEta(0.01);
     net.setMaxEpochs(5000);
 

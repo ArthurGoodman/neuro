@@ -18,7 +18,6 @@ const std::vector<double> &Network::Example::output() const {
 }
 
 Network::Network(const std::vector<int> &sizes) {
-    alpha = 1.0;
     eta = 1.0;
     maxError = 1e-3;
     maxEpochs = 1000;
@@ -120,14 +119,6 @@ void Network::setVerbose(bool verbose) {
     this->verbose = verbose;
 }
 
-double Network::getAlpha() const {
-    return alpha;
-}
-
-void Network::setAlpha(double alpha) {
-    this->alpha = alpha;
-}
-
 double Network::getEta() const {
     return eta;
 }
@@ -150,8 +141,4 @@ int Network::getMaxEpochs() const {
 
 void Network::setMaxEpochs(int maxEpochs) {
     this->maxEpochs = maxEpochs;
-}
-
-double Network::sigmoid(double x) const {
-    return 1.0 / (1.0 + exp(-alpha * x));
 }
