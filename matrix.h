@@ -35,7 +35,7 @@ public:
 
 template <class T>
 Matrix<T>::Matrix()
-    : data(0) {
+    : data(0), h(0), w(0) {
 }
 
 template <class T>

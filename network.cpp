@@ -28,9 +28,11 @@ Network::Network(const std::vector<int> &sizes) {
     for (int i = 1; i < (int)sizes.size(); i++) {
         Matrix<double> m(sizes[i - 1] + 1, sizes[i]);
 
+        double scale = 1.0 / sqrt(m.height() * m.width());
+
         for (int i = 0; i < m.height(); i++)
             for (int j = 0; j < m.width(); j++)
-                m[i][j] = (double)rand() / RAND_MAX * 1e-1;
+                m[i][j] = (double)rand() / RAND_MAX * scale;
 
         w.push_back(m);
     }
@@ -41,13 +43,10 @@ std::vector<double> Network::impulse(const std::vector<double> &input) {
 
     for (int i = 0; i < (int)w.size(); i++) {
         n[i].push_back(1);
-
         n[i + 1] = w[i].multiply(n[i]);
 
         for (int j = 0; j < (int)n[i + 1].size(); j++)
-            n[i + 1][j] = sigmoid(n[i + 1][j]);
-
-        n[i].pop_back();
+            n[i + 1][j] = tanh(n[i + 1][j]);
     }
 
     return n[n.size() - 1];
@@ -75,7 +74,7 @@ void Network::learn(const std::vector<Example> &examples) {
 
             for (int i = 0; i < (int)output.size(); i++) {
                 averageError += fabs(correctOutput[i] - output[i]);
-                delta[i] = output[i] * (1 - output[i]) * (correctOutput[i] - output[i]);
+                delta[i] = (1 - output[i] * output[i]) * (correctOutput[i] - output[i]);
             }
 
             averageError /= delta.size();
@@ -85,18 +84,15 @@ void Network::learn(const std::vector<Example> &examples) {
             error = std::max(error, averageError);
 
             for (int i = w.size() - 1; i >= 0; i--) {
-                for (int p = 0; p < (int)n[i].size() - 1; p++)
+                for (int p = 0; p < (int)n[i].size(); p++)
                     for (int q = 0; q < (int)n[i + 1].size(); q++)
                         w[i][p][q] += eta * n[i][p] * delta[q];
-
-                for (int q = 0; q < (int)n[i + 1].size(); q++)
-                    w[i][n[i].size() - 1][q] += delta[q];
 
                 if (i > 0) {
                     delta = w[i].multiplyTransposed(delta);
 
                     for (int p = 0; p < (int)n[i].size() - 1; p++)
-                        delta[p] *= n[i][p] * (1 - n[i][p]);
+                        delta[p] *= (1 - n[i][p] * n[i][p]);
                 }
             }
         }

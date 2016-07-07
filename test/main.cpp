@@ -77,11 +77,11 @@ int main(int, const char **) {
 
     int size = 15 * 20 * 1;
 
-    Network net({size, 100, 8 /*11*/});
+    Network net({size, 8 /*11*/});
 
-    net.setAlpha(0.5);
-    net.setEta(0.99);
-    //    net.setMaxEpochs(50);
+    net.setAlpha(1.0);
+    net.setEta(0.01);
+    net.setMaxEpochs(5000);
 
     net.learn(examples);
 
