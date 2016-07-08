@@ -9,9 +9,10 @@ Widget::Widget(QWidget *parent)
 
     scale = 500;
 
-    net = new Network({2, 10, 10, 10, 10, 10, 2});
+    net = new Network({2, 10, 3, 2});
     net->setVerbose(false);
-    net->setLearningRate(0.025);
+    net->setLearningRate(0.05);
+    net->setMomentum(0.1);
 
     init();
 
@@ -88,8 +89,17 @@ void Widget::init() {
 
     for (int i = 0; i < 500; i++) {
         QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
-        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
-        //        points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
+        // points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
+        // points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.25);
+
+        bool green = p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2;
+
+        if (green)
+            p.ry() *= 0.8;
+        else
+            p.ry() = 1.0 - (1.0 - p.ry()) * 0.8;
+
+        points << QPair<QPointF, int>(p, green);
     }
 
     net->init();
