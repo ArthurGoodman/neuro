@@ -20,12 +20,13 @@ public:
 private:
     double alpha;
     double learningRate;
+    double momentum;
     double maxError;
     int maxEpochs;
 
     bool verbose;
 
-    std::vector<Matrix<double>> w;
+    std::vector<Matrix<double>> w, dw;
     std::vector<std::vector<double>> n;
 
 public:
@@ -42,6 +43,9 @@ public:
 
     double getLearningRate() const;
     void setLearningRate(double learningRate);
+
+    double getMomentum() const;
+    void setMomentum(double momentum);
 
     double getMaxError() const;
     void setMaxError(double maxError);

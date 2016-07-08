@@ -9,9 +9,9 @@ Widget::Widget(QWidget *parent)
 
     scale = 500;
 
-    net = new Network({2, 10, 10, 2});
+    net = new Network({2, 10, 10, 10, 10, 10, 2});
     net->setVerbose(false);
-    net->setLearningRate(0.01);
+    net->setLearningRate(0.025);
 
     init();
 

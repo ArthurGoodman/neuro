@@ -19,6 +19,7 @@ const std::vector<double> &Network::Example::output() const {
 
 Network::Network(const std::vector<int> &sizes) {
     learningRate = 1.0;
+    momentum = 0.9;
     maxError = 1e-3;
     maxEpochs = 1000;
 
@@ -27,9 +28,12 @@ Network::Network(const std::vector<int> &sizes) {
     n = std::vector<std::vector<double>>(sizes.size());
 
     w.reserve(sizes.size() - 1);
+    dw.reserve(sizes.size() - 1);
 
-    for (int i = 1; i < (int)sizes.size(); i++)
+    for (int i = 1; i < (int)sizes.size(); i++) {
         w.push_back(Matrix<double>(sizes[i - 1] + 1, sizes[i]));
+        dw.push_back(Matrix<double>(sizes[i - 1] + 1, sizes[i]));
+    }
 
     init();
 }
@@ -39,8 +43,10 @@ void Network::init() {
         double scale = 1.0 / sqrt(w[m].height() * w[m].width());
 
         for (int i = 0; i < w[m].height(); i++)
-            for (int j = 0; j < w[m].width(); j++)
+            for (int j = 0; j < w[m].width(); j++) {
                 w[m][i][j] = (double)rand() / RAND_MAX * scale;
+                dw[m][i][j] = 0;
+            }
     }
 }
 
@@ -99,8 +105,10 @@ double Network::learn(const Example &e) {
 
     for (int i = w.size() - 1; i >= 0; i--) {
         for (int p = 0; p < w[i].height(); p++)
-            for (int q = 0; q < w[i].width(); q++)
-                w[i][p][q] += learningRate * n[i][p] * delta[q];
+            for (int q = 0; q < w[i].width(); q++) {
+                dw[i][p][q] = momentum * dw[i][p][q] + (1 - momentum) * learningRate * n[i][p] * delta[q];
+                w[i][p][q] += dw[i][p][q];
+            }
 
         if (i > 0) {
             delta = w[i].multiplyTransposed(delta);
@@ -127,6 +135,14 @@ double Network::getLearningRate() const {
 
 void Network::setLearningRate(double learningRate) {
     this->learningRate = learningRate;
+}
+
+double Network::getMomentum() const {
+    return momentum;
+}
+
+void Network::setMomentum(double momentum) {
+    this->momentum = momentum;
 }
 
 double Network::getMaxError() const {
