@@ -84,14 +84,14 @@ int main(int, const char **) {
 
     net.train(examples);
 
-    print(net.impulse(_1_data));
-    print(net.impulse(_2_data));
-    print(net.impulse(_3_data));
-    print(net.impulse(_4_data));
-    print(net.impulse(_5_data));
-    print(net.impulse(_6_data));
-    print(net.impulse(_7_data));
-    print(net.impulse(_8_data));
+    print(net.forward(_1_data));
+    print(net.forward(_2_data));
+    print(net.forward(_3_data));
+    print(net.forward(_4_data));
+    print(net.forward(_5_data));
+    print(net.forward(_6_data));
+    print(net.forward(_7_data));
+    print(net.forward(_8_data));
     //    print(net.impulse(_o_data));
     //    print(net.impulse(_f_data));
     //    print(net.impulse(_cd_data));

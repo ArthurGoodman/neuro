@@ -31,6 +31,8 @@ public:
     std::vector<T> multiply(const std::vector<T> &v) const;
     std::vector<T> multiplyTransposed(const std::vector<T> &v) const;
     Matrix transposed() const;
+
+    static Matrix<T> multiply(const std::vector<T> &a, const std::vector<T> &b);
 };
 
 template <class T>
@@ -150,4 +152,15 @@ Matrix<T> Matrix<T>::transposed() const {
             t[j][i] = at(i, j);
 
     return t;
+}
+
+template <class T>
+Matrix<T> Matrix<T>::multiply(const std::vector<T> &a, const std::vector<T> &b) {
+    Matrix<T> m(a.size(), b.size());
+
+    for (int i = 0; i < m.height(); i++)
+        for (int j = 0; j < m.width(); j++)
+            m[i][j] = a[i] * b[j];
+
+    return m;
 }

@@ -4,37 +4,47 @@
 
 #include "matrix.h"
 
+typedef unsigned int uint;
+
 class Network {
 public:
     class Example {
         std::vector<double> in;
-        std::vector<double> out;
+        uint ci;
 
     public:
-        Example(const std::vector<double> &in, const std::vector<double> &out);
+        Example(const std::vector<double> &in, uint classIndex);
 
         const std::vector<double> &input() const;
-        const std::vector<double> &output() const;
+        uint classIndex() const;
     };
 
 private:
-    double alpha;
+    std::vector<Matrix<double>> w, gsum, dw;
+    std::vector<std::vector<double>> a, g;
+
     double learningRate;
     double momentum;
-    double maxError;
+    double l2Decay;
+    double maxLoss;
+
     int maxEpochs;
 
     bool verbose;
-
-    std::vector<Matrix<double>> w, dw;
-    std::vector<std::vector<double>> n;
 
 public:
     Network(const std::vector<int> &sizes);
 
     void init();
 
-    std::vector<double> impulse(const std::vector<double> &input);
+    std::vector<double> forward(const std::vector<double> &input);
+
+private:
+    void tanh(std::vector<double> &v);
+    std::vector<double> softmax(const std::vector<double> &v);
+    void backward(uint classIndex);
+
+public:
     void train(const std::vector<Example> &examples);
     double learn(const Example &e);
 
@@ -47,8 +57,11 @@ public:
     double getMomentum() const;
     void setMomentum(double momentum);
 
-    double getMaxError() const;
-    void setMaxError(double maxError);
+    double getL2Decay() const;
+    void setL2Decay(double l2Decay);
+
+    double getMaxLoss() const;
+    void setMaxLoss(double maxLoss);
 
     int getMaxEpochs() const;
     void setMaxEpochs(int maxEpochs);
