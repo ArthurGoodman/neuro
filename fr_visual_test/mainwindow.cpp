@@ -58,10 +58,11 @@ void MainWindow::paintEvent() {
     Painter p(this);
     p.fillRect(rect(), Color(211, 211, 211));
 
-    p.setAntialiasing(true);
+    const Color bgRed(228, 82, 82);
+    const Color bgGreen(82, 228, 82);
 
-    Color red(255, 0, 0, 150);
-    Color green(0, 255, 0, 150);
+    const Color red(200, 55, 55);
+    const Color green(55, 200, 55);
 
     int radius = 5;
 
@@ -70,7 +71,7 @@ void MainWindow::paintEvent() {
     for (double x = 0; x < 1; x += step)
         for (double y = 0; y < 1; y += step) {
             uint out = net->predict({x, y});
-            p.fillRect(fr::Rectangle((x - 0.5) * scale + width() / 2, (0.5 - y - step) * scale + height() / 2, (x - 0.5 + step) * scale + width() / 2, (0.5 - y) * scale + height() / 2), out == 0 ? red : green);
+            p.fillRect(fr::Rectangle((x - 0.5) * scale + width() / 2, (0.5 - y - step) * scale + height() / 2, (x - 0.5 + step) * scale + width() / 2, (0.5 - y) * scale + height() / 2), out == 0 ? bgRed : bgGreen);
         }
 
     for (const std::pair<Vector2, int> &point : points) {
