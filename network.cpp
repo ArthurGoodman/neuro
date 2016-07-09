@@ -120,7 +120,7 @@ void Network::train(const std::vector<Example> &examples) {
     std::vector<Example> ex(examples);
 
     for (int i = 0; i < maxEpochs; i++) {
-        std::random_shuffle(ex.begin(), ex.end());
+        // std::random_shuffle(ex.begin(), ex.end());
 
         double loss = 0;
 
