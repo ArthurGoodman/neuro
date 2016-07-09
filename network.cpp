@@ -23,24 +23,27 @@ Network::Network(const std::vector<int> &sizes) {
 
     w.reserve(sizes.size() - 1);
     gsum.reserve(sizes.size() - 1);
+    dw.reserve(sizes.size() - 1);
 
     for (uint i = 0; i < sizes.size() - 1; i++) {
         Matrix<double> m(sizes[i] + 1, sizes[i + 1]);
 
         w.push_back(m);
         gsum.push_back(m);
+        dw.push_back(m);
     }
-
-    dw.resize(sizes.size() - 1);
 
     learningRate = 0.01;
     momentum = 0.1;
     l2Decay = 0.001;
     maxLoss = 1e-3;
 
+    batchSize = 1;
     maxEpochs = 1000;
 
     verbose = true;
+
+    counter = 0;
 
     init();
 }
@@ -53,6 +56,7 @@ void Network::init() {
             for (int k = 0; k < w[i].width(); k++) {
                 w[i][j][k] = (double)rand() / RAND_MAX * scale;
                 gsum[i][j][k] = 0;
+                dw[i][j][k] = 0;
             }
     }
 }
@@ -110,7 +114,7 @@ void Network::backward(uint classIndex) {
             g[i - 1].pop_back();
         }
 
-        dw[i] = Matrix<double>::multiply(a[i], g[i]);
+        dw[i] += Matrix<double>::multiply(a[i], g[i]);
     }
 }
 
@@ -137,15 +141,20 @@ double Network::learn(const Example &e) {
     forward(e.input());
     backward(e.classIndex());
 
-    for (uint i = 0; i < w.size(); i++)
-        for (int j = 0; j < w[i].height(); j++)
-            for (int k = 0; k < w[i].width(); k++)
-                w[i][j][k] += gsum[i][j][k] = momentum * gsum[i][j][k] - learningRate * ((j < w[i].height() - 1 ? l2Decay : 0) * w[i][j][k] + dw[i][j][k]);
-
     double loss = -log(a.back()[e.classIndex()]);
 
     if (verbose)
         std::cout << loss << "\n";
+
+    if (++counter % batchSize == 0) {
+        for (uint i = 0; i < w.size(); i++)
+            for (int j = 0; j < w[i].height(); j++)
+                for (int k = 0; k < w[i].width(); k++) {
+                    gsum[i][j][k] = momentum * gsum[i][j][k] - learningRate * ((j < w[i].height() - 1 ? l2Decay : 0) * w[i][j][k] + dw[i][j][k]) / batchSize;
+                    w[i][j][k] += gsum[i][j][k];
+                    dw[i][j][k] = 0;
+                }
+    }
 
     return loss;
 }
@@ -195,6 +204,14 @@ double Network::getMaxLoss() const {
 
 void Network::setMaxLoss(double maxLoss) {
     this->maxLoss = maxLoss;
+}
+
+int Network::getBatchSize() const {
+    return batchSize;
+}
+
+void Network::setBatchSize(int batchSize) {
+    this->batchSize = batchSize;
 }
 
 int Network::getMaxEpochs() const {

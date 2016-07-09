@@ -28,6 +28,8 @@ public:
 
     T *operator[](int i);
 
+    Matrix<T> &operator+=(const Matrix<double> &m);
+
     std::vector<T> multiply(const std::vector<T> &v) const;
     std::vector<T> multiplyTransposed(const std::vector<T> &v) const;
     Matrix transposed() const;
@@ -120,47 +122,56 @@ T *Matrix<T>::operator[](int i) {
 }
 
 template <class T>
+Matrix<T> &Matrix<T>::operator+=(const Matrix<double> &m) {
+    for (int i = 0; i < h; i++)
+        for (int j = 0; j < w; j++)
+            (*this)[i][j] = m.at(i, j);
+
+    return *this;
+}
+
+template <class T>
 std::vector<T> Matrix<T>::multiply(const std::vector<T> &v) const {
-    std::vector<T> result(w);
-    std::fill(result.begin(), result.end(), (T)0);
+    std::vector<T> r(w);
+    std::fill(r.begin(), r.end(), (T)0);
 
     for (int j = 0; j < w; j++)
         for (int i = 0; i < h; i++)
-            result[j] += at(i, j) * v[i];
+            r[j] += at(i, j) * v[i];
 
-    return result;
+    return r;
 }
 
 template <class T>
 std::vector<T> Matrix<T>::multiplyTransposed(const std::vector<T> &v) const {
-    std::vector<T> result(h);
-    std::fill(result.begin(), result.end(), (T)0);
+    std::vector<T> r(h);
+    std::fill(r.begin(), r.end(), (T)0);
 
     for (int j = 0; j < h; j++)
         for (int i = 0; i < w; i++)
-            result[j] += at(j, i) * v[i];
+            r[j] += at(j, i) * v[i];
 
-    return result;
+    return r;
 }
 
 template <class T>
 Matrix<T> Matrix<T>::transposed() const {
-    Matrix t(h, w);
+    Matrix r(h, w);
 
     for (int j = 0; j < w; j++)
         for (int i = 0; i < h; i++)
-            t[j][i] = at(i, j);
+            r[j][i] = at(i, j);
 
-    return t;
+    return r;
 }
 
 template <class T>
 Matrix<T> Matrix<T>::multiply(const std::vector<T> &a, const std::vector<T> &b) {
-    Matrix<T> m(a.size(), b.size());
+    Matrix<T> r(a.size(), b.size());
 
-    for (int i = 0; i < m.height(); i++)
-        for (int j = 0; j < m.width(); j++)
-            m[i][j] = a[i] * b[j];
+    for (int i = 0; i < r.height(); i++)
+        for (int j = 0; j < r.width(); j++)
+            r[i][j] = a[i] * b[j];
 
-    return m;
+    return r;
 }

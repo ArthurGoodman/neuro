@@ -28,9 +28,12 @@ private:
     double l2Decay;
     double maxLoss;
 
+    int batchSize;
     int maxEpochs;
 
     bool verbose;
+
+    int counter;
 
 public:
     Network(const std::vector<int> &sizes);
@@ -61,6 +64,9 @@ public:
 
     double getMaxLoss() const;
     void setMaxLoss(double maxLoss);
+
+    int getBatchSize() const;
+    void setBatchSize(int batchSize);
 
     int getMaxEpochs() const;
     void setMaxEpochs(int maxEpochs);
