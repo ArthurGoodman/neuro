@@ -9,7 +9,7 @@ Widget::Widget(QWidget *parent)
 
     scale = 500;
 
-    net = new Network({2, 6, 2, 2});
+    net = new Network({2, 6, 2});
     net->setVerbose(false);
 
     net->setLearningRate(0.01);
@@ -100,19 +100,19 @@ void Widget::paintEvent(QPaintEvent *) {
 void Widget::init() {
     points.clear();
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 100; i++) {
         QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
 
-        // points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
+        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
 
         // points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.3);
 
-        bool green = p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2;
-        if (green)
-            p.ry() *= 0.8;
-        else
-            p.ry() = 1.0 - (1.0 - p.ry()) * 0.8;
-        points << QPair<QPointF, int>(p, green);
+        // bool green = p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2;
+        // if (green)
+        //     p.ry() *= 0.8;
+        // else
+        //     p.ry() = 1.0 - (1.0 - p.ry()) * 0.8;
+        // points << QPair<QPointF, int>(p, green);
     }
 
     net->init();

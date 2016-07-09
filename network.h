@@ -44,7 +44,7 @@ public:
 
 private:
     void tanh(std::vector<double> &v);
-    std::vector<double> softmax(const std::vector<double> &v);
+    void softmax(std::vector<double> &v);
     void backward(uint classIndex);
 
 public:

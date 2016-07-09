@@ -18,7 +18,7 @@ uint Network::Example::classIndex() const {
 }
 
 Network::Network(const std::vector<int> &sizes) {
-    a.resize(sizes.size() + 1);
+    a.resize(sizes.size());
     g.resize(sizes.size() - 1);
 
     w.reserve(sizes.size() - 1);
@@ -73,7 +73,9 @@ std::vector<double> Network::forward(const std::vector<double> &input) {
             tanh(a[i + 1]);
     }
 
-    return a.back() = softmax(a[a.size() - 2]);
+    softmax(a.back());
+
+    return a.back();
 }
 
 void Network::tanh(std::vector<double> &v) {
@@ -81,21 +83,17 @@ void Network::tanh(std::vector<double> &v) {
         v[j] = ::tanh(v[j]);
 }
 
-std::vector<double> Network::softmax(const std::vector<double> &v) {
-    std::vector<double> r(v.size());
-
+void Network::softmax(std::vector<double> &v) {
     double max = v[0];
     for (uint j = 1; j < v.size(); j++)
         max = std::max(max, v[j]);
 
     double sum = 0;
     for (uint j = 0; j < v.size(); j++)
-        sum += r[j] = exp(v[j] - max);
+        sum += v[j] = exp(v[j] - max);
 
     for (uint j = 0; j < v.size(); j++)
-        r[j] /= sum;
-
-    return r;
+        v[j] /= sum;
 }
 
 void Network::backward(uint classIndex) {
@@ -146,7 +144,7 @@ double Network::learn(const Example &e) {
     if (verbose)
         std::cout << loss << "\n";
 
-    if (++counter % batchSize == 0) {
+    if (++counter % batchSize == 0)
         for (uint i = 0; i < w.size(); i++)
             for (int j = 0; j < w[i].height(); j++)
                 for (int k = 0; k < w[i].width(); k++) {
@@ -154,7 +152,6 @@ double Network::learn(const Example &e) {
                     w[i][j][k] += gsum[i][j][k];
                     dw[i][j][k] = 0;
                 }
-    }
 
     return loss;
 }
