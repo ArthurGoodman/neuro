@@ -72,10 +72,11 @@ void Widget::paintEvent(QPaintEvent *) {
 
     p.translate(width() / 2, height() / 2);
 
-    p.setRenderHint(QPainter::Antialiasing);
+    const QColor bgRed(228, 82, 82);
+    const QColor bgGreen(82, 228, 82);
 
-    const QColor red = QColor(255, 0, 0, 150);
-    const QColor green = QColor(0, 255, 0, 150);
+    const QColor red(200, 55, 55);
+    const QColor green(55, 200, 55);
 
     int radius = 5;
 
@@ -84,7 +85,7 @@ void Widget::paintEvent(QPaintEvent *) {
     for (double x = 0; x < 1; x += step)
         for (double y = 0; y < 1; y += step) {
             uint out = net->predict({x, y});
-            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out == 0 ? red : green);
+            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out == 0 ? bgRed : bgGreen);
         }
 
     for (const QPair<QPointF, int> &point : points) {
