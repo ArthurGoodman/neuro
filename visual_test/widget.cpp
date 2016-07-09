@@ -83,8 +83,8 @@ void Widget::paintEvent(QPaintEvent *) {
 
     for (double x = 0; x < 1; x += step)
         for (double y = 0; y < 1; y += step) {
-            std::vector<double> out = net->forward({x, y});
-            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out[0] > out[1] ? red : green);
+            uint out = net->predict({x, y});
+            p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out == 0 ? red : green);
         }
 
     for (const QPair<QPointF, int> &point : points) {
