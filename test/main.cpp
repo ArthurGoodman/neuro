@@ -6,13 +6,6 @@
 
 #include "fr/image.h"
 
-void print(const std::vector<double> &v) {
-    for (int i = 0; i < (int)v.size(); i++)
-        std::cout << v[i] << " ";
-
-    std::cout << "\n";
-}
-
 std::vector<double> processImage(const fr::Image &image) {
     std::vector<double> result;
 
@@ -20,9 +13,9 @@ std::vector<double> processImage(const fr::Image &image) {
         for (int y = 0; y < image.height(); y++) {
             int color = image.getPixel(x, y);
 
-            result.push_back(1.0 - (double)fr::Color::red(color) / 255);
-            // result.push_back((double)fr::Color::green(color) / 255);
-            // result.push_back((double)fr::Color::blue(color) / 255);
+            result.push_back((double)fr::Color::red(color) / 255);
+            result.push_back((double)fr::Color::green(color) / 255);
+            result.push_back((double)fr::Color::blue(color) / 255);
         }
 
     return result;
@@ -31,72 +24,62 @@ std::vector<double> processImage(const fr::Image &image) {
 int main(int, const char **) {
     srand(time(0));
 
-    fr::Image _1("digits/1.bmp");
-    fr::Image _2("digits/2.bmp");
-    fr::Image _3("digits/3.bmp");
-    fr::Image _4("digits/4.bmp");
-    fr::Image _5("digits/5.bmp");
-    fr::Image _6("digits/6.bmp");
-    fr::Image _7("digits/7.bmp");
-    fr::Image _8("digits/8.bmp");
-    //    fr::Image _o("data/o.bmp");
-    //    fr::Image _f("data/f.bmp");
-    //    fr::Image _cd("data/cd.bmp");
-    //    fr::Image _cm("data/cm.bmp");
-    //    fr::Image _cl("data/cl.bmp");
-
-    std::vector<double> _1_data = processImage(_1);
-    std::vector<double> _2_data = processImage(_2);
-    std::vector<double> _3_data = processImage(_3);
-    std::vector<double> _4_data = processImage(_4);
-    std::vector<double> _5_data = processImage(_5);
-    std::vector<double> _6_data = processImage(_6);
-    std::vector<double> _7_data = processImage(_7);
-    std::vector<double> _8_data = processImage(_8);
-    //    std::vector<double> _o_data = processImage(_o);
-    //    std::vector<double> _f_data = processImage(_f);
-    //    std::vector<double> _cd_data = processImage(_cd);
-    //    std::vector<double> _cm_data = processImage(_cm);
-    //    std::vector<double> _cl_data = processImage(_cl);
+    std::vector<double> _1 = processImage(fr::Image("data/1.bmp"));
+    std::vector<double> _2 = processImage(fr::Image("data/2.bmp"));
+    std::vector<double> _3 = processImage(fr::Image("data/3.bmp"));
+    std::vector<double> _4 = processImage(fr::Image("data/4.bmp"));
+    std::vector<double> _5 = processImage(fr::Image("data/5.bmp"));
+    std::vector<double> _6 = processImage(fr::Image("data/6.bmp"));
+    std::vector<double> _7 = processImage(fr::Image("data/7.bmp"));
+    std::vector<double> _8 = processImage(fr::Image("data/8.bmp"));
+    std::vector<double> _o = processImage(fr::Image("data/o.bmp"));
+    std::vector<double> _f = processImage(fr::Image("data/f.bmp"));
+    std::vector<double> _cd = processImage(fr::Image("data/cd.bmp"));
+    std::vector<double> _cm = processImage(fr::Image("data/cm.bmp"));
+    std::vector<double> _cl = processImage(fr::Image("data/cl.bmp"));
 
     std::vector<Network::Example> examples;
 
-    examples.push_back(Network::Example(_1_data, {1, 0, 0, 0, 0, 0, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_2_data, {0, 1, 0, 0, 0, 0, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_3_data, {0, 0, 1, 0, 0, 0, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_4_data, {0, 0, 0, 1, 0, 0, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_5_data, {0, 0, 0, 0, 1, 0, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_6_data, {0, 0, 0, 0, 0, 1, 0, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_7_data, {0, 0, 0, 0, 0, 0, 1, 0 /*, 0, 0, 0*/}));
-    examples.push_back(Network::Example(_8_data, {0, 0, 0, 0, 0, 0, 0, 1 /*, 0, 0, 0*/}));
-    //    examples.push_back(Network::Example(_o_data, {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}));
-    //    examples.push_back(Network::Example(_f_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}));
-    //    examples.push_back(Network::Example(_cd_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
-    //    examples.push_back(Network::Example(_cm_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
-    //    examples.push_back(Network::Example(_cl_data, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
+    examples.push_back(Network::Example(_1, 0));
+    examples.push_back(Network::Example(_2, 1));
+    examples.push_back(Network::Example(_3, 2));
+    examples.push_back(Network::Example(_4, 3));
+    examples.push_back(Network::Example(_5, 4));
+    examples.push_back(Network::Example(_6, 5));
+    examples.push_back(Network::Example(_7, 6));
+    examples.push_back(Network::Example(_8, 7));
+    examples.push_back(Network::Example(_o, 8));
+    examples.push_back(Network::Example(_f, 9));
+    examples.push_back(Network::Example(_cd, 10));
+    examples.push_back(Network::Example(_cm, 10));
+    examples.push_back(Network::Example(_cl, 10));
 
-    int size = 15 * 20 * 1;
+    int size = 48 * 48 * 3;
 
-    Network net({size, 8 /*11*/});
+    Network net({size, 11});
 
     net.setLearningRate(0.01);
-    net.setMaxEpochs(5000);
+    net.setMomentum(0.1);
+    net.setL2Decay(0.001);
+
+    net.setMaxEpochs(1000);
+    net.setMaxLoss(1e-4);
 
     net.train(examples);
 
-    print(net.forward(_1_data));
-    print(net.forward(_2_data));
-    print(net.forward(_3_data));
-    print(net.forward(_4_data));
-    print(net.forward(_5_data));
-    print(net.forward(_6_data));
-    print(net.forward(_7_data));
-    print(net.forward(_8_data));
-    //    print(net.impulse(_o_data));
-    //    print(net.impulse(_f_data));
-    //    print(net.impulse(_cd_data));
-    //    print(net.impulse(_cm_data));
-    //    print(net.impulse(_cl_data));
+    std::cout << net.predict(_1) << "\n";
+    std::cout << net.predict(_2) << "\n";
+    std::cout << net.predict(_3) << "\n";
+    std::cout << net.predict(_4) << "\n";
+    std::cout << net.predict(_5) << "\n";
+    std::cout << net.predict(_6) << "\n";
+    std::cout << net.predict(_7) << "\n";
+    std::cout << net.predict(_8) << "\n";
+    std::cout << net.predict(_o) << "\n";
+    std::cout << net.predict(_f) << "\n";
+    std::cout << net.predict(_cd) << "\n";
+    std::cout << net.predict(_cm) << "\n";
+    std::cout << net.predict(_cl) << "\n";
 
     return 0;
 }

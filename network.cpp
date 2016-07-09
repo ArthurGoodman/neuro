@@ -33,8 +33,8 @@ Network::Network(const std::vector<int> &sizes) {
 
     dw.resize(sizes.size() - 1);
 
-    learningRate = 0.1;
-    momentum = 0.9;
+    learningRate = 0.01;
+    momentum = 0.1;
     l2Decay = 0.001;
     maxLoss = 1e-3;
 
@@ -63,20 +63,13 @@ std::vector<double> Network::forward(const std::vector<double> &input) {
     for (uint i = 0; i < w.size(); i++) {
         a[i].push_back(1);
 
-        if (i > 0)
-            g[i - 1].resize(a[i].size());
-
         a[i + 1] = w[i].multiply(a[i]);
 
         if (i < w.size() - 1)
             tanh(a[i + 1]);
     }
 
-    a.back() = softmax(a[a.size() - 2]);
-
-    g[w.size() - 1].resize(a.back().size());
-
-    return a.back();
+    return a.back() = softmax(a[a.size() - 2]);
 }
 
 void Network::tanh(std::vector<double> &v) {
@@ -102,16 +95,20 @@ std::vector<double> Network::softmax(const std::vector<double> &v) {
 }
 
 void Network::backward(uint classIndex) {
+    g.back().resize(a.back().size());
+
     for (uint j = 0; j < a.back().size(); j++)
         g.back()[j] = -((j == classIndex ? 1 : 0) - a.back()[j]);
 
     for (int i = w.size() - 1; i >= 0; i--) {
         if (i < (int)w.size() - 1)
-            for (uint j = 0; j < g[i].size() - 1; j++)
+            for (uint j = 0; j < g[i].size(); j++)
                 g[i][j] *= 1 - a[i + 1][j] * a[i + 1][j];
 
-        if (i > 0)
+        if (i > 0) {
             g[i - 1] = w[i].multiplyTransposed(g[i]);
+            g[i - 1].pop_back();
+        }
 
         dw[i] = Matrix<double>::multiply(a[i], g[i]);
     }
@@ -142,10 +139,8 @@ double Network::learn(const Example &e) {
 
     for (uint i = 0; i < w.size(); i++)
         for (int j = 0; j < w[i].height(); j++)
-            for (int k = 0; k < w[i].width(); k++) {
-                gsum[i][j][k] = momentum * gsum[i][j][k] - learningRate * (l2Decay * w[i][j][k] + dw[i][j][k]);
-                w[i][j][k] += gsum[i][j][k];
-            }
+            for (int k = 0; k < w[i].width(); k++)
+                w[i][j][k] += gsum[i][j][k] = momentum * gsum[i][j][k] - learningRate * ((j < w[i].height() - 1 ? l2Decay : 0) * w[i][j][k] + dw[i][j][k]);
 
     double loss = -log(a.back()[e.classIndex()]);
 
@@ -155,12 +150,19 @@ double Network::learn(const Example &e) {
     return loss;
 }
 
-bool Network::isVerbose() const {
-    return verbose;
-}
+uint Network::predict(const std::vector<double> &input) {
+    forward(input);
 
-void Network::setVerbose(bool verbose) {
-    this->verbose = verbose;
+    double max = a.back()[0];
+    uint iMax = 0;
+
+    for (uint i = 1; i < a.back().size(); i++)
+        if (max < a.back()[i]) {
+            max = a.back()[i];
+            iMax = i;
+        }
+
+    return iMax;
 }
 
 double Network::getLearningRate() const {
@@ -201,4 +203,12 @@ int Network::getMaxEpochs() const {
 
 void Network::setMaxEpochs(int maxEpochs) {
     this->maxEpochs = maxEpochs;
+}
+
+bool Network::isVerbose() const {
+    return verbose;
+}
+
+void Network::setVerbose(bool verbose) {
+    this->verbose = verbose;
 }

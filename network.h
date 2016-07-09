@@ -48,8 +48,7 @@ public:
     void train(const std::vector<Example> &examples);
     double learn(const Example &e);
 
-    bool isVerbose() const;
-    void setVerbose(bool verbose);
+    uint predict(const std::vector<double> &input);
 
     double getLearningRate() const;
     void setLearningRate(double learningRate);
@@ -65,4 +64,7 @@ public:
 
     int getMaxEpochs() const;
     void setMaxEpochs(int maxEpochs);
+
+    bool isVerbose() const;
+    void setVerbose(bool verbose);
 };
