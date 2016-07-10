@@ -23,5 +23,9 @@ protected:
     void paintEvent(QPaintEvent *e);
 
 private:
+    void createNet();
+    void learn();
     void init();
+    void defaults();
+    void circleData();
 };

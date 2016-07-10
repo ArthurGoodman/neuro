@@ -24,5 +24,8 @@ private:
     void createNet();
     void learn();
     void init();
+    void defaultData();
+    void circleData();
+    void spiralData();
     void defaults();
 };

@@ -7,18 +7,9 @@ Widget::Widget(QWidget *parent)
 
     qsrand(QTime::currentTime().msec());
 
-    scale = 500;
-
-    net = new Network({2, 6, 2});
-    net->setVerbose(false);
-
-    net->setLearningRate(0.01);
-    net->setMomentum(0.1);
-    net->setL2Decay(0);
-
-    net->setBatchSize(1);
-
+    createNet();
     init();
+    defaults();
 
     startTimer(0);
 }
@@ -28,18 +19,7 @@ Widget::~Widget() {
 }
 
 void Widget::timerEvent(QTimerEvent *) {
-    const int n = 20;
-
-    double averageLoss = 0;
-
-    for (int i = 0; i < n; i++)
-        for (const QPair<QPointF, int> &point : points)
-            averageLoss += net->learn(Network::Example({point.first.x(), point.first.y()}, point.second));
-
-    averageLoss /= n * points.size();
-
-    qDebug() << averageLoss;
-
+    learn();
     update();
 }
 
@@ -55,6 +35,10 @@ void Widget::keyPressEvent(QKeyEvent *e) {
 
     case Qt::Key_R:
         init();
+        break;
+
+    case Qt::Key_Backspace:
+        defaults();
         break;
     }
 }
@@ -80,10 +64,10 @@ void Widget::paintEvent(QPaintEvent *) {
 
     int radius = 5;
 
-    double step = 0.01;
+    double step = 0.1;
 
-    for (double x = 0; x < 1; x += step)
-        for (double y = 0; y < 1; y += step) {
+    for (double x = -5; x < 5; x += step)
+        for (double y = -5; y < 5; y += step) {
             uint out = net->predict({x, y});
             p.fillRect(QRectF((x - 0.5) * scale, (0.5 - y - step) * scale, step * scale, step * scale), out == 0 ? bgRed : bgGreen);
         }
@@ -98,23 +82,70 @@ void Widget::paintEvent(QPaintEvent *) {
     }
 }
 
+void Widget::createNet() {
+    net = new Network({2, 6, 2, 2});
+    net->setVerbose(false);
+
+    net->setLearningRate(0.01);
+    net->setMomentum(0.1);
+    net->setL2Decay(0);
+
+    net->setBatchSize(1);
+}
+
+void Widget::learn() {
+    const int n = 20;
+
+    double averageLoss = 0;
+
+    for (int i = 0; i < n; i++)
+        for (const QPair<QPointF, int> &point : points)
+            averageLoss += net->learn(Network::Example({point.first.x(), point.first.y()}, point.second));
+
+    averageLoss /= n * points.size();
+
+    qDebug() << averageLoss;
+}
+
 void Widget::init() {
     points.clear();
 
-    for (int i = 0; i < 100; i++) {
-        QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
+    //    for (int i = 0; i < 500; i++) {
+    //        QPointF p((double)qrand() / RAND_MAX, (double)qrand() / RAND_MAX);
 
-        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
+    //        points << QPair<QPointF, int>(p, p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2);
 
-        // points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.3);
+    //        // points << QPair<QPointF, int>(p, sqrt((p.x() - 0.5) * (p.x() - 0.5) + (p.y() - 0.5) * (p.y() - 0.5)) < 0.3);
 
-        // bool green = p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2;
-        // if (green)
-        //     p.ry() *= 0.8;
-        // else
-        //     p.ry() = 1.0 - (1.0 - p.ry()) * 0.8;
-        // points << QPair<QPointF, int>(p, green);
-    }
+    //        // bool green = p.y() < cos((p.x() - 0.5) * M_PI) * 0.75 * (cos(5 * M_PI * p.x()) + 1.75) / 2;
+    //        // if (green)
+    //        //     p.ry() *= 0.8;
+    //        // else
+    //        //     p.ry() = 1.0 - (1.0 - p.ry()) * 0.8;
+    //        // points << QPair<QPointF, int>(p, green);
+    //    }
+
+    circleData();
 
     net->init();
+}
+
+void Widget::defaults() {
+    scale = 50.001;
+}
+
+void Widget::circleData() {
+    int n = 50;
+
+    for (int i = 0; i < n; i++) {
+        double r = (double)qrand() / RAND_MAX * 2;
+        double t = (double)qrand() / RAND_MAX * 2 * M_PI;
+        points << QPair<QPointF, int>(QPointF(r * sin(t), r * cos(t)), 1);
+    }
+
+    for (int i = 0; i < n; i++) {
+        double r = 3.0 + (double)qrand() / RAND_MAX * 2;
+        double t = 2.0 * M_PI * i / 50;
+        points << QPair<QPointF, int>(QPointF(r * sin(t), r * cos(t)), 0);
+    }
 }
