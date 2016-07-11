@@ -54,7 +54,7 @@ void Network::init() {
 
         for (int j = 0; j < w[i].height(); j++)
             for (int k = 0; k < w[i].width(); k++) {
-                w[i][j][k] = (double)rand() / RAND_MAX * scale;
+                w[i][j][k] = j < w[i].height() - 1 ? gaussRandom(0, scale) : 0;
                 gsum[i][j][k] = 0;
                 dw[i][j][k] = 0;
             }
@@ -225,4 +225,32 @@ bool Network::isVerbose() const {
 
 void Network::setVerbose(bool verbose) {
     this->verbose = verbose;
+}
+
+double Network::gaussRandom() {
+    static double v1, v2, s;
+    static int phase = 0;
+    double x;
+
+    if (phase == 0) {
+        do {
+            double u1 = (double)rand() / RAND_MAX;
+            double u2 = (double)rand() / RAND_MAX;
+
+            v1 = 2 * u1 - 1;
+            v2 = 2 * u2 - 1;
+            s = v1 * v1 + v2 * v2;
+        } while (s >= 1 || s == 0);
+
+        x = v1 * sqrt(-2 * log(s) / s);
+    } else
+        x = v2 * sqrt(-2 * log(s) / s);
+
+    phase = 1 - phase;
+
+    return x;
+}
+
+double Network::gaussRandom(double mu, double std) {
+    return mu + gaussRandom() * std;
 }

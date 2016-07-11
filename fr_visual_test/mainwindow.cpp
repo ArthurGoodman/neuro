@@ -15,7 +15,7 @@ MainWindow::MainWindow() {
     init();
     defaults();
 
-    setTimer(0);
+    setTimer(1000 / 20);
 }
 
 MainWindow::~MainWindow() {
@@ -91,9 +91,9 @@ void MainWindow::createNet() {
 
     net->setLearningRate(0.01);
     net->setMomentum(0.1);
-    net->setL2Decay(0);
+    net->setL2Decay(0.001);
 
-    net->setBatchSize(1);
+    net->setBatchSize(10);
 }
 
 void MainWindow::learn() {
@@ -117,7 +117,7 @@ void MainWindow::init() {
 }
 
 void MainWindow::defaultData() {
-    int n = 100;
+    int n = 200;
 
     for (int i = 0; i < n; i++) {
         Vector2 p((double)rand() / RAND_MAX, (double)rand() / RAND_MAX);

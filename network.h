@@ -73,4 +73,8 @@ public:
 
     bool isVerbose() const;
     void setVerbose(bool verbose);
+
+private:
+    double gaussRandom();
+    double gaussRandom(double mu, double std);
 };
