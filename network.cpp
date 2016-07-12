@@ -128,7 +128,7 @@ void Network::train(const std::vector<Example> &examples) {
             loss = std::max(loss, learn(e));
 
         if (verbose)
-            std::cout << "\n" << i << ": loss = " << loss << "\n\n";
+            std::cout << "\n" << i << ": loss = " << loss << "\n\n" << std::flush;
 
         if (loss <= maxLoss)
             break;
@@ -142,7 +142,7 @@ double Network::learn(const Example &e) {
     double loss = -log(a.back()[e.classIndex()]);
 
     if (verbose)
-        std::cout << loss << "\n";
+        std::cout << loss << "\n" << std::flush;
 
     if (++counter % batchSize == 0)
         for (uint i = 0; i < w.size(); i++)
