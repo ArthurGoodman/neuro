@@ -15,7 +15,7 @@ MainWindow::MainWindow() {
     init();
     defaults();
 
-    setTimer(1000 / 20);
+    setTimer(0);
 }
 
 MainWindow::~MainWindow() {
