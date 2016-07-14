@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 Network::Example::Example(const std::vector<double> &input, uint classIndex)
     : in(input), ci(classIndex) {
@@ -15,6 +16,29 @@ const std::vector<double> &Network::Example::input() const {
 
 uint Network::Example::classIndex() const {
     return ci;
+}
+
+Network Network::loadFromFile(const std::string &fileName) {
+    std::ifstream file(fileName, std::ios::binary);
+
+    int size;
+    std::vector<int> sizes;
+
+    file.read((char *)&size, sizeof(int));
+
+    sizes.resize(size);
+
+    file.read((char *)&sizes[0], sizeof(int) * size);
+
+    Network net(sizes);
+
+    for (uint i = 0; i < net.w.size(); i++)
+        file.read((char *)net.w[i][0], net.w[i].height() * net.w[i].width() * sizeof(double));
+
+    return net;
+}
+
+Network::Network() {
 }
 
 Network::Network(const std::vector<int> &sizes) {
@@ -33,6 +57,43 @@ Network::Network(const std::vector<int> &sizes) {
         dw.push_back(m);
     }
 
+    defaults();
+    init();
+}
+
+Network::Network(const Network &net) {
+    *this = net;
+}
+
+Network::Network(Network &&net) {
+    *this = std::move(net);
+}
+
+Network &Network::operator=(const Network &net) {
+    w = net.w;
+    gsum = net.gsum;
+    dw = net.dw;
+    a = net.a;
+    g = net.g;
+
+    defaults();
+
+    return *this;
+}
+
+Network &Network::operator=(Network &&net) {
+    w = std::move(net.w);
+    gsum = std::move(net.gsum);
+    dw = std::move(net.dw);
+    a = std::move(net.a);
+    g = std::move(net.g);
+
+    defaults();
+
+    return *this;
+}
+
+void Network::defaults() {
     learningRate = 0.01;
     momentum = 0.1;
     l2Decay = 0.001;
@@ -44,8 +105,6 @@ Network::Network(const std::vector<int> &sizes) {
     verbose = true;
 
     counter = 0;
-
-    init();
 }
 
 void Network::init() {
@@ -169,6 +228,28 @@ uint Network::predict(const std::vector<double> &input) {
         }
 
     return iMax;
+}
+
+void Network::saveToFile(const std::string &fileName) {
+    std::ofstream file(fileName, std::ios::binary);
+
+    int *buffer = new int[a.size()];
+
+    buffer[0] = a.size();
+
+    file.write((char *)buffer, sizeof(int));
+
+    for (uint i = 0; i < a.size(); i++)
+        buffer[i] = i < a.size() - 1 ? w[i].height() - 1 : w[i - 1].width();
+
+    file.write((char *)buffer, a.size() * sizeof(int));
+
+    for (uint i = 0; i < w.size(); i++)
+        file.write((char *)w[i][0], w[i].height() * w[i].width() * sizeof(double));
+
+    delete[] buffer;
+
+    file.close();
 }
 
 double Network::getLearningRate() const {

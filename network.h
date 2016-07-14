@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include "matrix.h"
 
@@ -36,8 +37,17 @@ private:
     int counter;
 
 public:
-    Network(const std::vector<int> &sizes);
+    static Network loadFromFile(const std::string &fileName);
 
+    Network();
+    Network(const std::vector<int> &sizes);
+    Network(const Network &net);
+    Network(Network &&net);
+
+    Network &operator=(const Network &net);
+    Network &operator=(Network &&net);
+
+    void defaults();
     void init();
 
     std::vector<double> forward(const std::vector<double> &input);
@@ -52,6 +62,8 @@ public:
     double learn(const Example &e);
 
     uint predict(const std::vector<double> &input);
+
+    void saveToFile(const std::string &fileName);
 
     double getLearningRate() const;
     void setLearningRate(double learningRate);
